@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Available Quizzes{% endblock %}
+{% block content %}
+<div class="container mx-auto py-8 px-6">
+    <h2 class="text-3xl font-bold text-blue-600 mb-6">Available Quizzes</h2>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="mb-4 p-4 {% if message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %} rounded">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if quiz_data %}
+        {% for subject_data in quiz_data %}
+            <div class="mb-8">
+                <h3 class="text-2xl font-semibold text-gray-900 mb-4">{{ subject_data.subject|default:"Uncategorized" }}</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {% for quiz in subject_data.quizzes %}
+                        <div class="bg-white shadow-md rounded-lg p-6">
+                            <h4 class="text-xl font-medium text-gray-900">{{ quiz.title }}</h4>
+                            <p class="text-gray-600 mt-2">{{ quiz.description|truncatewords:20 }}</p>
+                            <p class="text-sm text-gray-500 mt-2">Created by: {{ quiz.created_by.username }}</p>
+                            <a href="{% url 'attempt_quiz' quiz.id %}" class="mt-4 inline-block bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition-colors">Take Quiz</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-gray-600">No quizzes available at the moment.</p>
+    {% endif %}
+</div>
+{% endblock %}

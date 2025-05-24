@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+{% block header %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Message Icon with Notification -->
+    <div class="fixed top-4 right-20 z-50">
+        <a href="{% url 'accounts:message_inbox' %}" class="relative inline-block">
+            <svg class="w-7 h-7 text-gray-700 hover:text-blue-600 transition-colors duration-200 animate-pulse-slow" viewBox="0 0 24 24" fill="url(#message-gradient)">
+                <defs>
+                    <linearGradient id="message-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z" />
+            </svg>
+            {% if unread_count > 0 %}
+                <span class="absolute top-0 right-0 -mt-1 -mr-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-bounce">
+                    {{ unread_count }}
+                </span>
+            {% endif %}
+        </a>
+    </div>
+
+    <h2 class="text-2xl font-bold mb-6 animate-slide-in-left">
+        Welcome, {{ user.username }} ({{ user.user_type|capfirst }})
+    </h2>
+
+    {% if user.user_type == 'student' %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 animate-fade-in">
+                <h3 class="text-lg font-semibold text-gray-900">Quizzes</h3>
+                <p class="text-gray-600">Attempt your quizzes now!</p>
+                <a href="{% url 'attempt_quiz' quiz_id=1 %}" class="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all duration-200 hover:scale-105">Start Quiz</a>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 animate-fade-in">
+                <h3 class="text-lg font-semibold text-gray-900">Learning</h3>
+                <p class="text-gray-600">Watch educational videos.</p>
+                <a href="{% url 'learning:video_learning' %}" class="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all duration-200 hover:scale-105">Watch Videos</a>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 animate-fade-in">
+                <h3 class="text-lg font-semibold text-gray-900">Performance</h3>
+                <p class="text-gray-600">Check your quiz results.</p>
+                <a href="{% url 'student_performance' %}" class="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all duration-200 hover:scale-105">View Performance</a>
+            </div>
+        </div>
+    {% elif user.user_type == 'teacher' %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 animate-fade-in">
+                <h3 class="text-lg font-semibold text-gray-900">Create Quiz</h3>
+                <p class="text-gray-600">Design new quizzes for students.</p>
+                <a href="{% url 'create_quiz' %}" class="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all duration-200 hover:scale-105">Create Quiz</a>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 animate-fade-in">
+                <h3 class="text-lg font-semibold text-gray-900">Upload Video</h3>
+                <p class="text-gray-600">Share educational content.</p>
+                <a href="{% url 'learning:upload_video' %}" class="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all duration-200 hover:scale-105">Upload Video</a>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 animate-fade-in">
+                <h3 class="text-lg font-semibold text-gray-900">Results</h3>
+                <p class="text-gray-600">View student performance.</p>
+                <a href="{% url 'leaderboard' %}" class="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all duration-200 hover:scale-105">View Results</a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

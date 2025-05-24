@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% block title %}Leaderboard{% endblock %}
+{% block header %}Leaderboard{% endblock %}
+{% block content %}
+<div class="space-y-8">
+    <h2 class="text-3xl font-bold text-gray-900">Student Leaderboard</h2>
+    <div class="card p-8 max-w-4xl mx-auto">
+        <h3 class="text-xl font-semibold mb-6 text-gray-900">Top Performers</h3>
+        <table class="w-full text-left">
+            <thead>
+                <tr class="bg-gray-100">
+                    <th class="p-4">Rank</th>
+                    <th class="p-4">Student</th>
+                    <th class="p-4">Roll Number</th>
+                    <th class="p-4">Total Score</th>
+                    <th class="p-4">Quizzes Completed</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in leaderboard %}
+                    <tr class="border-b">
+                        <td class="p-4">{{ forloop.counter }}</td>
+                        <td class="p-4">{{ student.username }}</td>
+                        <td class="p-4">{{ student.roll_number }}</td>
+                        <td class="p-4">{{ student.total_score }}</td>
+                        <td class="p-4">{{ student.quizzes_completed }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5" class="p-4 text-center text-gray-600">No data available.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="mt-6">
+            <h3 class="text-xl font-semibold mb-4 text-gray-900">Overall Performance</h3>
+            <p class="text-gray-600">Average Score: {{ overall.avg_score|floatformat:2 }}</p>
+            <p class="text-gray-600">Completion Rate: {{ overall.completion_rate|floatformat:2 }}%</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

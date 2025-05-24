@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard - EduSmart ERP{% endblock %}
+{% block header %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-blue-200 py-12">
+    <div class="max-w-6xl mx-auto px-4">
+        <h2 class="text-3xl font-extrabold text-gray-800 mb-8 animate-slide-in-left">Welcome, {{ user.username }}!</h2>
+        <div class="bg-white rounded-2xl shadow-2xl p-8 animate-fade-in-up">
+            {% if messages %}
+                <div class="mb-6">
+                    {% for message in messages %}
+                        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg animate-fade-in mb-2">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-blue-100 p-4 rounded-lg">
+                    <h3 class="text-lg font-semibold text-blue-800">Total Users</h3>
+                    <p class="text-2xl font-bold text-blue-600">{{ user_count }}</p>
+                </div>
+                <div class="bg-green-100 p-4 rounded-lg">
+                    <h3 class="text-lg font-semibold text-green-800">Students</h3>
+                    <p class="text-2xl font-bold text-green-600">{{ student_count }}</p>
+                </div>
+                <div class="bg-purple-100 p-4 rounded-lg">
+                    <h3 class="text-lg font-semibold text-purple-800">Teachers</h3>
+                    <p class="text-2xl font-bold text-purple-600">{{ teacher_count }}</p>
+                </div>
+                <div class="bg-red-100 p-4 rounded-lg">
+                    <h3 class="text-lg font-semibold text-red-800">Admins</h3>
+                    <p class="text-2xl font-bold text-red-600">{{ admin_count }}</p>
+                </div>
+                <div class="bg-yellow-100 p-4 rounded-lg">
+                    <h3 class="text-lg font-semibold text-yellow-800">Sub-Admins</h3>
+                    <p class="text-2xl font-bold text-yellow-600">{{ sub_admin_count }}</p>
+                </div>
+                <div class="bg-indigo-100 p-4 rounded-lg">
+                    <h3 class="text-lg font-semibold text-indigo-800">Quizzes</h3>
+                    <p class="text-2xl font-bold text-indigo-600">{{ quiz_count }}</p>
+                </div>
+                <div class="bg-pink-100 p-4 rounded-lg">
+                    <h3 class="text-lg font-semibold text-pink-800">Videos</h3>
+                    <p class="text-2xl font-bold text-pink-600">{{ video_count }}</p>
+                </div>
+                <div class="bg-gray-100 p-4 rounded-lg">
+                    <h3 class="text-lg font-semibold text-gray-800">Unread Messages</h3>
+                    <p class="text-2xl font-bold text-gray-600">{{ unread_count }}</p>
+                </div>
+            </div>
+            {% if is_main_admin %}
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">Active Admin Invite Tokens</h3>
+                {% if active_tokens %}
+                    <div class="bg-gray-50 p-4 rounded-lg shadow mb-6">
+                        <ul class="space-y-2">
+                            {% for token in active_tokens %}
+                                <li class="flex items-center justify-between">
+                                    <span class="text-sm font-mono bg-gray-200 p-1 rounded">{{ token.token }}</span>
+                                    <span class="text-sm text-gray-600">Expires: {{ token.expires_at|date:"Y-m-d H:i" }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% else %}
+                    <p class="text-gray-600 mb-6">No active tokens. Generate a new one below.</p>
+                {% endif %}
+            {% endif %}
+            <div class="flex flex-col md:flex-row gap-4">
+                <a href="{% url 'accounts:manage_users' %}" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg">Manage Users</a>
+                {% if is_main_admin %}
+                    <a href="{% url 'accounts:create_sub_admin' %}" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-all duration-300 transform hover:scale-105 shadow-lg">Create Sub-Admin</a>
+                    <a href="{% url 'accounts:generate_admin_token' %}" class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg">Generate Admin Token</a>
+                {% endif %}
+                <a href="{% url 'accounts:message_inbox' %}" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-lg">Messages{% if unread_count > 0 %} ({{ unread_count }} new){% endif %}</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

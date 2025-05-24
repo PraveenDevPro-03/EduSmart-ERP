@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body class="bg-transparent font-sans">
+    <div class="flex flex-col h-full w-full text-sm">
+        <!-- Messages -->
+        {% if messages %}
+            <div class="p-2 animate-fade-in">
+                {% for message in messages %}
+                    <div class="mb-2 p-2 text-xs rounded-lg {% if message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %} animate-slide-in-left">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Chat Window -->
+        <div id="chat-window" class="flex-1 overflow-y-auto p-3 bg-white ">
+            {% if chat_history %}
+                {% for chat in chat_history %}
+                    <div class="mb-3 flex animate-slide-in-left">
+                        <div class="max-w-[70%] p-2 bg-gray-200 rounded-lg text-xs text-gray-800 shadow-sm">
+                            <p class="font-semibold text-[10px] text-gray-600 mb-1">You</p>
+                            {{ chat.user_message }}
+                        </div>
+                    </div>
+                    {% if chat.ai_response %}
+                        <div class="mb-3 flex justify-end animate-slide-in-right">
+                            <div class="max-w-[70%] p-2 bg-blue-100 rounded-lg text-xs text-gray-800 shadow-sm">
+                                <p class="font-semibold text-[10px] text-gray-600 mb-1">Assistant</p>
+                                {{ chat.ai_response }}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <div class="text-center text-gray-500 text-xs mt-4 animate-fade-in">
+                    Ask me anything about EduSmart ERP!
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Chat Input Form -->
+        <form method="POST" class="flex items-center p-2 bg-gray-50 border-t border-gray-200 animate-fade-in">
+            {% csrf_token %}
+            <input type="text" name="message" placeholder="Type your message..." class="flex-1 p-2 border rounded-lg text-xs focus:ring-2 focus:ring-blue-500 transition-all duration-200" required>
+            <button type="submit" class="ml-2 bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700 transition-all duration-200 hover:scale-105 text-xs">Send</button>
+            <button type="submit" name="clear_history" value="true" class="ml-2 bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700 transition-all duration-200 hover:scale-105 text-xs">Clear</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatWindow = document.getElementById('chat-window');
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+            chatWindow.scrollBehavior = 'smooth';
+        });
+    </script>
+</body>
+</html>

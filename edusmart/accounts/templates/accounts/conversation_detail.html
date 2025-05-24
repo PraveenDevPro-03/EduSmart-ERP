@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Conversation - EduSmart ERP{% endblock %}
+{% block header %}Conversation with {{ other_user.username }}{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-blue-200 py-12">
+    <div class="max-w-4xl mx-auto px-4">
+        <h2 class="text-3xl font-extrabold text-gray-800 mb-6 animate-slide-in-left">Conversation with {{ other_user.username }} ({{ other_user.user_type|capfirst }})</h2>
+        <div class="bg-white rounded-2xl shadow-2xl p-6 animate-fade-in-up">
+            {% if messages %}
+                <div class="mb-4">
+                    {% for message in messages %}
+                        <div class="bg-{% if message.tags == 'error' %}red{% else %}green{% endif %}-100 border-l-4 border-{% if message.tags == 'error' %}red{% else %}green{% endif %}-500 text-{% if message.tags == 'error' %}red{% else %}green{% endif %}-700 p-4 rounded-lg animate-fade-in mb-2">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <div class="space-y-4 mb-6">
+                {% for message in conversation %}
+                    <div class="{% if message.sender == user %}bg-blue-100{% else %}bg-gray-100{% endif %} p-4 rounded-lg">
+                        <p class="text-gray-800 font-semibold">
+                            {{ message.sender.username }} ({{ message.sender.user_type|capfirst }})
+                            <span class="text-sm text-gray-500">{{ message.timestamp|date:"Y-m-d H:i" }}</span>
+                        </p>
+                        <p class="text-gray-600">{{ message.content }}</p>
+                        {% if not message.is_read and message.receiver == user %}
+                            <span class="bg-red-500 text-white text-xs px-2 py-1 rounded">New</span>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+            <!-- Reply Form -->
+            <form method="post" action="{% url 'accounts:send_message' %}" class="space-y-4">
+                {% csrf_token %}
+                <input type="hidden" name="receiver" value="{{ other_user.id }}">
+                <div>
+                    <label for="content" class="block text-gray-700 font-semibold mb-1">Reply</label>
+                    <textarea name="content" id="content" rows="4" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" placeholder="Type your reply..." required></textarea>
+                </div>
+                <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    Send Reply
+                </button>
+            </form>
+            <div class="mt-4 flex justify-center">
+                <a href="{% url 'accounts:message_inbox' %}" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    Back to Inbox
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

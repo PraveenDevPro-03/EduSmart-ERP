@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Upload Video{% endblock %}
+{% block content %}
+<div class="container mx-auto py-8 px-6">
+    <h2 class="text-3xl font-bold text-blue-600 mb-6">Upload YouTube Video</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="mb-4 p-4 {% if message.tags == 'success' %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %} rounded">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="card p-8 max-w-lg mx-auto bg-white shadow-md rounded-lg">
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            <div>
+                <label for="title" class="block text-sm font-medium text-gray-700">Video Title</label>
+                <input type="text" name="title" id="title" class="mt-1 w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+            </div>
+            <div>
+                <label for="video_id" class="block text-sm font-medium text-gray-700">YouTube Video ID</label>
+                <input type="text" name="video_id" id="video_id" class="mt-1 w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="e.g., a9Hxkc9YxGE" required>
+            </div>
+            <div>
+                <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                <textarea name="description" id="description" rows="4" class="mt-1 w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
+            </div>
+            <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition-colors">Upload Video</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

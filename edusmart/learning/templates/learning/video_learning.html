@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Video Learning{% endblock %}
+{% block header %}Video Learning{% endblock %}
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-8">
+    <h2 class="text-3xl font-bold text-gray-900 mb-6">Explore Educational Videos</h2>
+    <!-- Search Bar -->
+    <form method="get" class="mb-6">
+        <div class="flex space-x-3">
+            <input type="text" name="search" placeholder="Search videos by title or description..." class="flex-1 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" value="{{ request.GET.search }}">
+            <button type="submit" class="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition-colors">Search</button>
+        </div>
+    </form>
+    <!-- Video Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for video in videos %}
+            <div class="card p-4 bg-white shadow-md rounded-lg">
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ video.title }}</h3>
+                <div class="relative" style="padding-bottom: 56.25%;">
+                    <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/{{ video.video_id }}" title="{{ video.title }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <p class="text-gray-600 mt-2">{{ video.description|truncatewords:20 }}</p>
+                <p class="text-gray-500 text-sm mt-1">Uploaded by: {{ video.uploaded_by.username }} on {{ video.uploaded_at|date:"M d, Y" }}</p>
+            </div>
+        {% empty %}
+            <p class="text-gray-600">No videos found.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

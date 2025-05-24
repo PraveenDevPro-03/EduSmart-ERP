@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Attempt Quiz: {{ quiz.title }}{% endblock %}
+{% block content %}
+<div class="container mx-auto py-8 px-6">
+    <h2 class="text-3xl font-bold text-blue-600 mb-6">{{ quiz.title }}</h2>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="mb-4 p-4 {% if message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %} rounded">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST" class="space-y-6">
+        {% csrf_token %}
+        {% for item in question_data %}
+            <div class="bg-white shadow-md rounded-lg p-6">
+                <h3 class="text-xl font-semibold text-gray-900 mb-4">{{ item.question_text }}</h3>
+                {% for index, option in item.indexed_options %}
+                    <div class="mb-2">
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="question_{{ item.question_id }}" value="{{ index }}" class="form-radio text-blue-600" required>
+                            <span class="ml-2 text-gray-700">{{ option }}</span>
+                        </label>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition-colors">Submit Quiz</button>
+    </form>
+</div>
+{% endblock %}

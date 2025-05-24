@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Edit User{% endblock %}
+{% block header %}Edit User: {{ editing_user.username }}{% endblock %}
+{% block content %}
+<div class="max-w-md mx-auto card p-8 bg-gradient-to-r from-blue-50 to-indigo-50 shadow-xl rounded-xl">
+    <h2 class="text-3xl font-bold text-gray-900 mb-6">Edit User: {{ editing_user.username }}</h2>
+    {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+                <div class="p-4 {% if message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %} rounded-lg">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <form method="post" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition-colors">Save Changes</button>
+    </form>
+    <p class="mt-4 text-center text-gray-600">
+        <a href="{% url 'accounts:manage_users' %}" class="text-blue-600 hover:underline">Back to Manage Users</a>
+    </p>
+</div>
+{% endblock %}

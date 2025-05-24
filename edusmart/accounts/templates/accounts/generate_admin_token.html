@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Generate Admin Token - EduSmart ERP{% endblock %}
+{% block header %}Generate Admin Token{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-blue-200 py-12">
+    <div class="max-w-3xl mx-auto px-4">
+        <h2 class="text-3xl font-extrabold text-gray-800 mb-6 animate-slide-in-left">Generate Admin Invite Token</h2>
+        <div class="bg-white rounded-2xl shadow-2xl p-6 animate-fade-in-up">
+            {% if messages %}
+                <div class="mb-4">
+                    {% for message in messages %}
+                        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg animate-fade-in mb-2">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if token %}
+                <div class="mb-6 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-lg animate-pulse">
+                    <h3 class="text-lg font-semibold mb-2">Your Admin Invite Token:</h3>
+                    <div class="flex items-center bg-gray-200 p-2 rounded">
+                        <p class="text-xl font-mono flex-1 break-all">{{ token }}</p>
+                        <button onclick="navigator.clipboard.writeText('{{ token }}'); alert('Token copied to clipboard!');" 
+                                class="ml-2 bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                            Copy
+                        </button>
+                    </div>
+                    <p class="text-sm mt-2">Expires in 7 days. Share securely with new admins.</p>
+                </div>
+            {% endif %}
+            <form method="post" class="mb-6">
+                {% csrf_token %}
+                <p class="text-gray-600 mb-4">Generate a new token for admin signup.</p>
+                <button type="submit" class="w-full sm:w-auto bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    Generate New Token
+                </button>
+            </form>
+            <div class="flex justify-center">
+                <a href="{% url 'accounts:dashboard' %}" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

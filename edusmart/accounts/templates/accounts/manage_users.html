@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block title %}Manage Users{% endblock %}
+{% block header %}Admin Control Panel{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto p-6 bg-gradient-to-r from-blue-50 to-indigo-50 shadow-xl rounded-xl">
+    <h2 class="text-3xl font-bold text-gray-900 mb-6">Manage Users</h2>
+    {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+                <div class="p-4 {% if message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %} rounded-lg">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="get" class="mb-6 flex flex-col md:flex-row gap-4">
+        <input type="text" name="search" value="{{ search_query }}" placeholder="Search by username, email, or roll number" class="w-full md:w-1/2 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500">
+        <select name="user_type" class="w-full md:w-1/4 p-3 border rounded-lg">
+            <option value="">All User Types</option>
+            <option value="student" {% if user_type_filter == 'student' %}selected{% endif %}>Student</option>
+            <option value="teacher" {% if user_type_filter == 'teacher' %}selected{% endif %}>Teacher</option>
+        </select>
+        <button type="submit" class="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700">Filter</button>
+    </form>
+
+    <div class="overflow-x-auto">
+        <table class="w-full bg-white rounded-lg shadow">
+            <thead>
+                <tr class="bg-blue-600 text-white">
+                    <th class="p-3 text-left">Username</th>
+                    <th class="p-3 text-left">Email</th>
+                    <th class="p-3 text-left">User Type</th>
+                    <th class="p-3 text-left">Roll Number</th>
+                    <th class="p-3 text-left">Department</th>
+                    <th class="p-3 text-left">Last Login</th>
+                    <th class="p-3 text-left">Status</th>
+                    <th class="p-3 text-left">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in page_obj %}
+                    <tr class="border-b">
+                        <td class="p-3">{{ user.username }}</td>
+                        <td class="p-3">{{ user.email }}</td>
+                        <td class="p-3">{{ user.get_user_type_display }}</td>
+                        <td class="p-3">{{ user.roll_number|default:"N/A" }}</td>
+                        <td class="p-3">{{ user.department|default:"N/A" }}</td>
+                        <td class="p-3">{{ user.last_login|date:"F j, Y H:i"|default:"Never" }}</td>
+                        <td class="p-3">
+                            {% if user.is_active %}
+                                <span class="text-green-600">Active</span>
+                            {% else %}
+                                <span class="text-red-600">Deactivated</span>
+                            {% endif %}
+                        </td>
+                        <td class="p-3 flex gap-2">
+                            <a href="{% url 'accounts:edit_user' user.id %}" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">Edit</a>
+                            <form method="post" action="{% url 'accounts:toggle_user_status' user.id %}" onsubmit="return confirm('Are you sure you want to {% if user.is_active %}deactivate{% else %}activate{% endif %} {{ user.username }}?');">
+                                {% csrf_token %}
+                                <button type="submit" class="bg-yellow-600 text-white px-3 py-1 rounded hover:bg-yellow-700">
+                                    {% if user.is_active %}Deactivate{% else %}Activate{% endif %}
+                                </button>
+                            </form>
+                            <form method="post" action="{% url 'accounts:delete_user' user.id %}" onsubmit="return confirm('Are you sure you want to delete {{ user.username }}? This action cannot be undone.');">
+                                {% csrf_token %}
+                                <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="8" class="p-3 text-center text-gray-600">No users found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if page_obj.has_other_pages %}
+        <div class="mt-6 flex justify-center">
+            <nav class="inline-flex rounded-md shadow">
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if user_type_filter %}&user_type={{ user_type_filter }}{% endif %}" class="px-3 py-2 bg-blue-600 text-white rounded-l-md hover:bg-blue-700">Previous</a>
+                {% endif %}
+                {% for num in page_obj.paginator.page_range %}
+                    <a href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if user_type_filter %}&user_type={{ user_type_filter }}{% endif %}" class="px-3 py-2 {% if page_obj.number == num %}bg-blue-600 text-white{% else %}bg-white text-blue-600{% endif %} border hover:bg-blue-100">{{ num }}</a>
+                {% endfor %}
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if user_type_filter %}&user_type={{ user_type_filter }}{% endif %}" class="px-3 py-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700">Next</a>
+                {% endif %}
+            </nav>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

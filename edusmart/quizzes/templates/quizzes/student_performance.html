@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Student Performance{% endblock %}
+{% block content %}
+<div class="container mx-auto py-8 px-6">
+    <h2 class="text-3xl font-bold text-blue-600 mb-6">Your Performance Dashboard</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="mb-4 p-4 {% if message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %} rounded">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Summary Metrics -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white shadow-md rounded-lg p-6 text-center">
+            <h3 class="text-lg font-semibold text-gray-900">Quizzes Completed</h3>
+            <p class="text-3xl font-bold text-blue-600">{{ quizzes_completed }}</p>
+        </div>
+        <div class="bg-white shadow-md rounded-lg p-6 text-center">
+            <h3 class="text-lg font-semibold text-gray-900">Average Score</h3>
+            <p class="text-3xl font-bold text-blue-600">{{ avg_score }}%</p>
+        </div>
+        <div class="bg-white shadow-md rounded-lg p-6 text-center">
+            <h3 class="text-lg font-semibold text-gray-900">Videos Watched</h3>
+            <p class="text-3xl font-bold text-blue-600">{{ videos_watched }}</p>
+        </div>
+    </div>
+
+    <!-- Performance Graph -->
+    <div class="bg-white shadow-md rounded-lg p-6">
+        <h3 class="text-xl font-semibold text-gray-900 mb-4">Quiz Scores Over Time</h3>
+        {% if scores %}
+            <div class="chart-container" style="position: relative; height: 400px; width: 100%;">
+                <canvas id="performanceChart"></canvas>
+            </div>
+        {% else %}
+            <p class="text-gray-600">No quiz results available. Start taking quizzes to see your performance!</p>
+        {% endif %}
+    </div>
+</div>
+
+{% if scores %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ labels|safe }},
+                datasets: [{
+                    label: 'Quiz Scores (%)',
+                    data: {{ scores|safe }},
+                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(59, 130, 246, 1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            font: { size: 14, weight: 'bold' },
+                            color: '#1f2937'
+                        }
+                    },
+                    tooltip: {
+                        enabled: true,
+                        backgroundColor: 'rgba(17, 24, 39, 0.8)',
+                        titleFont: { size: 14, weight: 'bold' },
+                        bodyFont: { size: 12 },
+                        padding: 10,
+                        cornerRadius: 4,
+                        callbacks: {
+                            label: function(context) {
+                                return `Score: ${context.parsed.y}%`;
+                            },
+                            afterLabel: function(context) {
+                                return `Subject: {{ subjects|safe }}[${context.dataIndex}]`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Quiz',
+                            font: { size: 14, weight: 'bold' },
+                            color: '#1f2937'
+                        },
+                        grid: { display: false },
+                        ticks: { color: '#1f2937', font: { size: 12 } }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Score (%)',
+                            font: { size: 14, weight: 'bold' },
+                            color: '#1f2937'
+                        },
+                        beginAtZero: true,
+                        max: 100,
+                        grid: { color: 'rgba(209, 213, 219, 0.5)' },
+                        ticks: { color: '#1f2937', font: { size: 12 }, stepSize: 20 }
+                    }
+                },
+                animation: { duration: 1000, easing: 'easeOutQuart' }
+            }
+        });
+    });
+</script>
+{% endif %}
+{% endblock %}

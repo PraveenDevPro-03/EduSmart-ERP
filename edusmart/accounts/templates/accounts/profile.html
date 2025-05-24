@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Profile{% endblock %}
+{% block header %}Your Profile{% endblock %}
+{% block content %}
+<div class="max-w-5xl mx-auto card p-8 bg-gradient-to-r from-blue-50 to-indigo-50 shadow-xl rounded-xl">
+    <h2 class="text-4xl font-extrabold text-gray-900 mb-8 text-center animate__animated animate__fadeIn">Edit Profile{% if editing_user != user %} for {{ editing_user.username }}{% endif %}</h2>
+    {% if messages %}
+        <div class="mb-6 animate__animated animate__bounceIn">
+            {% for message in messages %}
+                <div class="p-4 bg-green-100 text-green-700 rounded-lg shadow-md">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <form method="post" enctype="multipart/form-data" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {% csrf_token %}
+        <!-- Left Column: Basic Details -->
+        <div class="space-y-6 bg-white p-6 rounded-lg shadow-md animate__animated animate__fadeInLeft">
+            <h3 class="text-2xl font-semibold text-gray-900 mb-4">Personal Information</h3>
+            <div>
+                <label for="id_username" class="block text-gray-700 font-semibold">Username</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <p class="text-red-600 text-sm">{{ form.username.errors }}</p>
+                {% endif %}
+            </div>
+            <div>
+                <label for="id_email" class="block text-gray-700 font-semibold">Email</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <p class="text-red-600 text-sm">{{ form.email.errors }}</p>
+                {% endif %}
+            </div>
+            <div>
+                <label for="id_profile_picture" class="block text-gray-700 font-semibold">Profile Picture</label>
+                {{ form.profile_picture }}
+                {% if editing_user.profile_picture %}
+                    <img src="{{ editing_user.profile_picture.url }}" alt="Profile Picture" class="mt-2 w-40 h-40 rounded-full object-cover shadow-md">
+                {% endif %}
+                {% if form.profile_picture.errors %}
+                    <p class="text-red-600 text-sm">{{ form.profile_picture.errors }}</p>
+                {% endif %}
+            </div>
+            <div>
+                <label for="id_bio" class="block text-gray-700 font-semibold">Bio</label>
+                {{ form.bio }}
+                {% if form.bio.errors %}
+                    <p class="text-red-600 text-sm">{{ form.bio.errors }}</p>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Right Column: Role-Specific Details -->
+        <div class="space-y-6 bg-white p-6 rounded-lg shadow-md animate__animated animate__fadeInRight">
+            <h3 class="text-2xl font-semibold text-gray-900 mb-4">Role-Specific Information</h3>
+            {% if editing_user.user_type == 'teacher' %}
+                <div>
+                    <label for="id_department" class="block text-gray-700 font-semibold">Department</label>
+                    {% if user.is_staff %}
+                        {{ form.department }}
+                    {% else %}
+                        <input type="text" value="{{ editing_user.department|default:'N/A' }}" class="w-full p-3 border rounded-lg bg-gray-100" readonly>
+                    {% endif %}
+                    {% if form.department.errors %}
+                        <p class="text-red-600 text-sm">{{ form.department.errors }}</p>
+                    {% endif %}
+                </div>
+                <div>
+                    <label for="id_designation" class="block text-gray-700 font-semibold">Designation</label>
+                    {% if user.is_staff %}
+                        {{ form.designation }}
+                    {% else %}
+                        <input type="text" value="{{ editing_user.designation|default:'N/A' }}" class="w-full p-3 border rounded-lg bg-gray-100" readonly>
+                    {% endif %}
+                    {% if form.designation.errors %}
+                        <p class="text-red-600 text-sm">{{ form.designation.errors }}</p>
+                    {% endif %}
+                </div>
+            {% elif editing_user.user_type == 'student' %}
+                <div>
+                    <label for="id_course" class="block text-gray-700 font-semibold">Course</label>
+                    {% if user.is_staff %}
+                        {{ form.course }}
+                    {% else %}
+                        <input type="text" value="{{ editing_user.course|default:'N/A' }}" class="w-full p-3 border rounded-lg bg-gray-100" readonly>
+                    {% endif %}
+                    {% if form.course.errors %}
+                        <p class="text-red-600 text-sm">{{ form.course.errors }}</p>
+                    {% endif %}
+                </div>
+                <div>
+                    <label for="id_branch" class="block text-gray-700 font-semibold">Branch</label>
+                    {% if user.is_staff %}
+                        {{ form.branch }}
+                    {% else %}
+                        <input type="text" value="{{ editing_user.branch|default:'N/A' }}" class="w-full p-3 border rounded-lg bg-gray-100" readonly>
+                    {% endif %}
+                    {% if form.branch.errors %}
+                        <p class="text-red-600 text-sm">{{ form.branch.errors }}</p>
+                    {% endif %}
+                </div>
+                <div>
+                    <label for="id_roll_number" class="block text-gray-700 font-semibold">Roll Number</label>
+                    {% if user.is_staff %}
+                        {{ form.roll_number }}
+                    {% else %}
+                        <input type="text" value="{{ editing_user.roll_number|default:'N/A' }}" class="w-full p-3 border rounded-lg bg-gray-100" readonly>
+                    {% endif %}
+                    {% if form.roll_number.errors %}
+                        <p class="text-red-600 text-sm">{{ form.roll_number.errors }}</p>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+        <!-- Submit Button -->
+        <div class="lg:col-span-2">
+            <button type="submit" class="w-full bg-blue-600 text-white p-4 rounded-lg hover:bg-blue-700 transition-colors font-semibold shadow-md">Save Changes</button>
+        </div>
+    </form>
+</div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+{% endblock %}

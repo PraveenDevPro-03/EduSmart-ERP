@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+            <html>
+            <head>
+                <title>Certificate</title>
+                <style>
+                    body { font-family: Arial, sans-serif; text-align: center; }
+                    .certificate { border: 5px solid #1E90FF; padding: 20px; margin: 20px; }
+                    h1 { color: #1E90FF; }
+                    .signature { margin-top: 50px; }
+                </style>
+            </head>
+            <body>
+                <div class="certificate">
+                    <h1>Certificate of Achievement</h1>
+                    <p>This is to certify that</p>
+                    <h2>{{ attempt.student.username }}</h2>
+                    <p>has successfully completed the quiz</p>
+                    <h3>{{ attempt.quiz.title }}</h3>
+                    <p>with a score of {{ attempt.score }} / {{ attempt.quiz.question_set.count }}</p>
+                    <p>on {{ attempt.attempt_date }}</p>
+                    <div class="signature">
+                        <p>______________________</p>
+                        <p>EduSmart Admin</p>
+                    </div>
+                </div>
+            </body>
+            </html>

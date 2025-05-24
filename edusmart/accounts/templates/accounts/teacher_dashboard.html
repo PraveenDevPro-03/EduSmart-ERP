@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Teacher Dashboard{% endblock %}
+{% block header %}Teacher Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mx-auto py-8 px-6 space-y-8">
+    <!-- Message Icon with Notification -->
+    <div class="fixed top-4 right-20 z-50">
+        <a href="{% url 'accounts:message_inbox' %}" id="message-icon" class="relative inline-block">
+            <svg class="w-7 h-7 text-gray-700 hover:text-blue-600 transition-colors duration-200 animate-pulse-slow message-icon" viewBox="0 0 24 24" fill="url(#message-gradient)">
+                <defs>
+                    <linearGradient id="message-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z" />
+            </svg>
+            {% if unread_count > 0 %}
+                <span id="notification-badge" class="absolute top-0 right-0 -mt-1 -mr-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-bounce">
+                    {{ unread_count }}
+                </span>
+            {% endif %}
+        </a>
+    </div>
+
+    <div class="flex items-center justify-between">
+        <h2 class="text-3xl font-bold text-gray-900 animate-slide-in-left">Welcome, {{ user.username }}!</h2>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Quiz Metrics -->
+        <div class="card p-6 bg-white shadow-md rounded-lg animate-fade-in">
+            <h3 class="text-xl font-semibold mb-4 text-gray-900">Quiz Metrics</h3>
+            <p class="text-gray-600">Quizzes Created: {{ quiz_count }}</p>
+            <p class="text-gray-600">Average Student Score: {{ avg_score|floatformat:2 }}</p>
+        </div>
+        <!-- Student Progress -->
+        <div class="card p-6 bg-white shadow-md rounded-lg animate-fade-in">
+            <h3 class="text-xl font-semibold mb-4 text-gray-900">Student Progress</h3>
+            <p class="text-gray-600">Students Enrolled: {{ student_count }}</p>
+            <p class="text-gray-600">Completion Rate: {{ completion_rate|floatformat:2 }}%</p>
+        </div>
+        <!-- Quick Actions -->
+        <div class="card p-6 lg:col-span-2 bg-white shadow-md rounded-lg animate-fade-in">
+            <h3 class="text-xl font-semibold mb-4 text-gray-900">Quick Actions</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <a href="{% url 'create_quiz' %}" class="bg-blue-600 text-white p-3 rounded-lg text-center hover:bg-blue-700 transition-colors hover:scale-105">Create Quiz</a>
+                <a href="{% url 'learning:upload_video' %}" class="bg-blue-600 text-white p-3 rounded-lg text-center hover:bg-blue-700 transition-colors hover:scale-105">Upload Video</a>
+                <a href="{% url 'leaderboard' %}" class="bg-blue-600 text-white p-3 rounded-lg text-center hover:bg-blue-700 transition-colors hover:scale-105">View Results</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const messageIcon = document.getElementById('message-icon');
+    const notificationBadge = document.getElementById('notification-badge');
+    
+    if (messageIcon && notificationBadge) {
+        messageIcon.addEventListener('click', () => {
+            notificationBadge.style.display = 'none'; // Hide badge on click
+        });
+    }
+});
+</script>
+{% endblock %}

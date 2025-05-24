@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Student Dashboard{% endblock %}
+{% block header %}Student Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mx-auto py-8 px-6 space-y-8">
+    <!-- Message Icon with Notification -->
+    <div class="fixed top-4 right-20 z-50">
+        <a href="{% url 'accounts:message_inbox' %}" id="message-icon" class="relative inline-block">
+            <svg class="w-7 h-7 text-gray-700 hover:text-blue-600 transition-colors duration-200 animate-pulse-slow message-icon" viewBox="0 0 24 24" fill="url(#message-gradient)">
+                <defs>
+                    <linearGradient id="message-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z" />
+            </svg>
+            {% if unread_count > 0 %}
+                <span id="notification-badge" class="absolute top-0 right-0 -mt-1 -mr-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-bounce">
+                    {{ unread_count }}
+                </span>
+            {% endif %}
+        </a>
+    </div>
+
+    <div class="flex items-center justify-between">
+        <h2 class="text-3xl font-bold text-blue-600 animate-slide-in-left">Welcome, {{ user.username }}!</h2>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Performance Metrics -->
+        <div class="card p-6 bg-white shadow-md rounded-lg animate-fade-in">
+            <h3 class="text-xl font-semibold mb-4 text-gray-900">Your Performance</h3>
+            <p class="text-gray-600">Average Score: {{ total_score|floatformat:2 }}%</p>
+            <p class="text-gray-600">Quizzes Completed: {{ quizzes_completed }}</p>
+            <p class="text-gray-600">Videos Watched: {{ videos_watched }}</p>
+        </div>
+        <!-- Available Quizzes -->
+        <div class="card p-6 bg-white shadow-md rounded-lg animate-fade-in">
+            <h3 class="text-xl font-semibold mb-4 text-gray-900">Available Quizzes</h3>
+            {% if available_quizzes %}
+                <ul class="space-y-2">
+                    {% for quiz in available_quizzes %}
+                        <li class="flex justify-between items-center">
+                            <span>{{ quiz.title }} ({{ quiz.subject|default:"Uncategorized" }})</span>
+                            <a href="{% url 'attempt_quiz' quiz.id %}" class="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition-colors hover:scale-105">Take Quiz</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-gray-600">No quizzes available. Check back later!</p>
+            {% endif %}
+            <a href="{% url 'quiz_list' %}" class="mt-4 inline-block text-blue-600 hover:underline">View All Quizzes</a>
+        </div>
+        <!-- Quick Actions -->
+        <div class="card p-6 lg:col-span-2 bg-white shadow-md rounded-lg animate-fade-in">
+            <h3 class="text-xl font-semibold mb-4 text-gray-900">Quick Actions</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <a href="{% url 'quiz_list' %}" class="bg-blue-600 text-white p-3 rounded-lg text-center hover:bg-blue-700 transition-colors hover:scale-105">Browse Quizzes</a>
+                <a href="{% url 'learning:video_learning' %}" class="bg-blue-600 text-white p-3 rounded-lg text-center hover:bg-blue-700 transition-colors hover:scale-105">Watch Videos</a>
+                <a href="{% url 'student_performance' %}" class="bg-blue-600 text-white p-3 rounded-lg text-center hover:bg-blue-700 transition-colors hover:scale-105">View Performance</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const messageIcon = document.getElementById('message-icon');
+    const notificationBadge = document.getElementById('notification-badge');
+    
+    if (messageIcon && notificationBadge) {
+        messageIcon.addEventListener('click', () => {
+            notificationBadge.style.display = 'none'; // Hide badge on click
+        });
+    }
+});
+</script>
+{% endblock %}

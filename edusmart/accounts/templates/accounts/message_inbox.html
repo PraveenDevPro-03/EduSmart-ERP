@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Messages - EduSmart ERP{% endblock %}
+{% block header %}Messages{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-blue-200 py-12">
+    <div class="max-w-6xl mx-auto px-4">
+        <h2 class="text-3xl font-extrabold text-gray-800 mb-8 animate-slide-in-left">Messages</h2>
+        <div class="bg-white rounded-2xl shadow-2xl p-8 animate-fade-in-up">
+            {% if messages %}
+                <div class="mb-6">
+                    {% for message in messages %}
+                        <div class="bg-{% if message.tags == 'error' %}red{% else %}green{% endif %}-100 border-l-4 border-{% if message.tags == 'error' %}red{% else %}green{% endif %}-500 text-{% if message.tags == 'error' %}red{% else %}green{% endif %}-700 p-4 rounded-lg animate-fade-in mb-2">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- Compose New Message -->
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">Compose New Message</h3>
+                <form method="post" action="{% url 'accounts:send_message' %}" class="space-y-4">
+                    {% csrf_token %}
+                    <div>
+                        <label for="receiver" class="block text-gray-700 font-semibold mb-1">Send to</label>
+                        <select name="receiver" id="receiver" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" required>
+                            <option value="">Select a user</option>
+                            {% for user in users %}
+                                <option value="{{ user.id }}">{{ user.username }} ({{ user.user_type|capfirst }})</option>
+                            {% endfor %}
+                        </select>
+                        {% if users|length == 0 %}
+                            <p class="text-red-600 text-sm mt-1">No users available to message. Please add users.</p>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <label for="content" class="block text-gray-700 font-semibold mb-1">Message</label>
+                        <textarea name="content" id="content" rows="4" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" placeholder="Type your message..." required></textarea>
+                    </div>
+                    <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                        Send Message
+                    </button>
+                </form>
+            </div>
+
+            <!-- Messages List -->
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">Conversations</h3>
+            {% if conversations %}
+                <div class="space-y-4">
+                    {% for conversation in conversations %}
+                        <div class="bg-gray-50 p-4 rounded-lg shadow hover:bg-gray-100 transition-all duration-200">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-gray-800 font-semibold">
+                                        {% if conversation.sender == user %}
+                                            To: {{ conversation.receiver.username }} ({{ conversation.receiver.user_type|capfirst }})
+                                        {% else %}
+                                            From: {{ conversation.sender.username }} ({{ conversation.sender.user_type|capfirst }})
+                                        {% endif %}
+                                    </p>
+                                    <p class="text-gray-600">{{ conversation.content|truncatewords:20 }}</p>
+                                    <p class="text-sm text-gray-500">{{ conversation.timestamp|date:"Y-m-d H:i" }}</p>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    {% if not conversation.is_read and conversation.receiver == user %}
+                                        <span class="bg-red-500 text-white text-xs px-2 py-1 rounded">New</span>
+                                    {% endif %}
+                                    <a href="{% url 'accounts:conversation_detail' conversation.id %}" class="text-blue-600 hover:underline">View</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-600">No messages yet. Start a conversation above!</p>
+            {% endif %}
+
+            <div class="mt-6 flex justify-center">
+                <a href="{% url 'accounts:dashboard' %}" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Create Quiz{% endblock %}
+{% block content %}
+<div class="container mx-auto py-8 px-6">
+    <h2 class="text-3xl font-bold text-blue-600 mb-6">Create Quiz</h2>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="mb-4 p-4 {% if message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %} rounded">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST" class="space-y-6">
+        {% csrf_token %}
+        <div>
+            <label for="title" class="block text-sm font-medium text-gray-700">Quiz Title</label>
+            <input type="text" name="title" id="title" class="mt-1 w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+        </div>
+        <div>
+            <label for="subject" class="block text-sm font-medium text-gray-700">Subject</label>
+            <input type="text" name="subject" id="subject" class="mt-1 w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="e.g., Math, Science">
+        </div>
+        <div>
+            <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+            <textarea name="description" id="description" rows="4" class="mt-1 w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
+        </div>
+        <div id="questions" class="space-y-4">
+            <h3 class="text-xl font-semibold text-gray-900">Questions</h3>
+        </div>
+        <input type="hidden" name="question_count" id="question_count" value="0">
+        <button type="button" id="add-question" class="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition-colors">Add Question</button>
+        <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition-colors">Create Quiz</button>
+    </form>
+</div>
+
+<script>
+    let questionCount = 0;
+
+    document.getElementById('add-question').addEventListener('click', () => {
+        questionCount++;
+        const questionsDiv = document.getElementById('questions');
+        const questionDiv = document.createElement('div');
+        questionDiv.className = 'bg-white shadow-md rounded-lg p-6';
+        questionDiv.innerHTML = `
+            <h4 class="text-lg font-medium text-gray-900 mb-4">Question ${questionCount}</h4>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700">Question Text</label>
+                <input type="text" name="questions[${questionCount-1}][text]" class="mt-1 w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Option 1</label>
+                    <input type="text" name="questions[${questionCount-1}][options][0]" class="mt-1 w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Option 2</label>
+                    <input type="text" name="questions[${questionCount-1}][options][1]" class="mt-1 w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Option 3</label>
+                    <input type="text" name="questions[${questionCount-1}][options][2]" class="mt-1 w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Option 4</label>
+                    <input type="text" name="questions[${questionCount-1}][options][3]" class="mt-1 w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+                </div>
+            </div>
+            <div class="mt-4">
+                <label class="block text-sm font-medium text-gray-700">Correct Option (0-3)</label>
+                <input type="number" name="questions[${questionCount-1}][correct]" min="0" max="3" class="mt-1 w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" required>
+            </div>
+        `;
+        questionsDiv.appendChild(questionDiv);
+        document.getElementById('question_count').value = questionCount;
+    });
+</script>
+{% endblock %}
