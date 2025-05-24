@@ -12,7 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Security settings
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'faa00e*-b!2n!if-3osd)ga^@$z+%g^f#9%4#q*q6#kke(_ocs')  # Set in Render
 DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'  # False for production
-ALLOWED_HOSTS = os.environ.get('edusmart-erp.onrender.com', 'localhost,127.0.0.1').split(',')  # Update with Render URL
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'edusmart-erp.onrender.com,localhost,127.0.0.1').split(',')
 
 # Application definition
 INSTALLED_APPS = [
